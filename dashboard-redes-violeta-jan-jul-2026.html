@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Redes Sociais · Supermercado Violeta · Keepads</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#00CA9E; --green-d:#00a884; --green-soft:#e6faf5;
+  --ink:#0D0D0D; --txt:#0D0D0D; --mute:#6b7280; --line:#e8ebef;
+  --bg:#ffffff; --panel:#ffffff; --panel2:#f7f9fb; --red:#ef5b4c; --red-soft:#fdeae7;
+  --amber:#b8860b; --amber-soft:#fff6dd;
+  --ig:#C13584; --fb:#1877F2;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--txt);font-family:'Poppins',system-ui,sans-serif;}
+.wrap{max-width:1240px;margin:0 auto;padding:34px 26px 60px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:22px;margin-bottom:20px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.logo{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.logo b{color:var(--green)}
+.logo .dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--green);margin-left:1px}
+.tagline{font-size:10px;color:var(--mute);letter-spacing:2px;text-transform:uppercase;border-left:1px solid var(--line);padding-left:12px}
+.head h1{font-size:25px;font-weight:700;letter-spacing:-.5px}
+.head h1 b{color:var(--green-d)}
+.eyebrow{font-size:11px;letter-spacing:3px;color:var(--green-d);text-transform:uppercase;font-weight:700;margin-bottom:7px}
+.sub{color:var(--mute);font-size:13px;margin-top:5px}
+.tag{font-size:11px;color:var(--green-d);border:1.5px solid var(--green);padding:6px 14px;border-radius:20px;background:var(--green-soft);font-weight:600}
+
+.filterbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:22px;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(13,13,13,.05)}
+.filterbar .flbl{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:1.4px;font-weight:700}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:#fff;border:1px solid var(--line);font-family:inherit;font-size:12.5px;font-weight:600;color:var(--mute);padding:8px 16px;border-radius:9px;cursor:pointer;transition:.15s}
+.chip:hover{color:var(--ink);border-color:var(--green)}
+.chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+.fnow{margin-left:auto;font-size:12px;color:var(--green-d);font-weight:700;background:var(--green-soft);border:1px solid var(--green);padding:6px 14px;border-radius:20px;white-space:nowrap}
+
+.tabs{display:flex;gap:8px;margin-bottom:26px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tab{background:none;border:none;color:var(--mute);font-size:13px;font-weight:600;padding:12px 20px;cursor:pointer;border-bottom:3px solid transparent;transition:.15s;font-family:inherit}
+.tab:hover{color:var(--ink)}
+.tab.active{color:var(--ink);border-bottom-color:var(--green)}
+.view{display:none}.view.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:14px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.kpi .lbl{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:1.2px;font-weight:600}
+.kpi .val{font-size:28px;font-weight:800;margin-top:8px;letter-spacing:-.5px;color:var(--ink)}
+.kpi .val.green{color:var(--green-d)}
+.kpi .val.ig{color:var(--ig)} .kpi .val.fb{color:var(--fb)}
+.kpi .meta{font-size:11px;color:var(--mute);margin-top:5px}
+.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 1px 3px rgba(13,13,13,.04)}
+.card.full{grid-column:1/-1}
+.card h3{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--ink);margin-bottom:4px;font-weight:700}
+.card .h-sub{font-size:11px;color:var(--mute);margin-bottom:18px}
+.chart-box{position:relative;height:300px}.chart-sm{position:relative;height:250px}
+.chead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.chead .h-sub{margin-bottom:0}
+.toggle{display:flex;gap:4px;background:var(--panel2);padding:4px;border-radius:10px;flex-shrink:0}
+.toggle button{background:none;border:none;font-family:inherit;font-size:11.5px;font-weight:600;color:var(--mute);padding:7px 14px;border-radius:7px;cursor:pointer;transition:.15s;white-space:nowrap}
+.toggle button:hover{color:var(--ink)}
+.toggle button.on{background:var(--green);color:#fff}
+
+.funnel{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-top:4px}
+.fst{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:18px 16px;text-align:center;position:relative}
+.fst .fl{font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;color:var(--mute);font-weight:700;line-height:1.4;min-height:26px}
+.fst .fv{font-size:29px;font-weight:800;margin:9px 0 4px;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.fst .fd{font-size:11px;color:var(--mute);line-height:1.45;min-height:46px}
+.fst .fr{font-size:10px;font-weight:700;padding:6px 10px;border-radius:8px;margin-top:12px;letter-spacing:.3px}
+.ok .fv{color:var(--green-d)} .ok .fr{background:var(--green-soft);color:var(--green-d)} .ok{border-top:3px solid var(--green)}
+.bad .fv{color:var(--red)} .bad .fr{background:var(--red-soft);color:var(--red)} .bad{border-top:3px solid var(--red)}
+.mid .fv{color:var(--amber)} .mid .fr{background:var(--amber-soft);color:var(--amber)} .mid{border-top:3px solid var(--amber)}
+.formula{background:var(--ink);border-radius:12px;padding:15px 20px;margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}
+.formula span{font-size:11.5px;color:#e8ebef;letter-spacing:.6px;font-weight:600}
+.formula b{color:var(--green)}
+.insight{background:var(--green-soft);border:1px solid var(--green);border-radius:16px;padding:22px 24px;margin-top:18px}
+.insight h3{font-size:12px;letter-spacing:2px;color:var(--green-d);text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.insight p{font-size:14px;line-height:1.65;color:#1a3d35;margin-bottom:10px}
+.insight p:last-child{margin-bottom:0}
+.insight b{color:var(--green-d)}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{text-align:left;color:var(--mute);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:1px;padding:10px 8px;border-bottom:2px solid var(--line)}
+th.r{text-align:right}
+td{padding:11px 8px;border-bottom:1px solid var(--line);color:#374151}
+td.r{text-align:right;font-variant-numeric:tabular-nums}
+tr:hover td{background:var(--green-soft)}
+tr.tot td{background:var(--panel2);font-weight:700;color:var(--ink);border-top:2px solid var(--ink)}
+tr.tot:hover td{background:var(--panel2)}
+tr.off td{opacity:.32}
+tr.off:hover td{background:transparent}
+tr.ref td{background:#fff;color:var(--mute);font-size:11px;font-style:normal;border-bottom:none}
+tr.ref:hover td{background:#fff}
+.num{font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.num.g{color:var(--green-d)} .num.r2{color:var(--red)} .num.a{color:var(--amber)}
+.up{color:var(--green-d);font-weight:700;font-size:11px}
+.dn{color:var(--red);font-weight:700;font-size:11px}
+.neu{color:var(--mute);font-weight:600;font-size:11px}
+td.selcol,th.selcol{background:var(--green-soft) !important;box-shadow:inset 2px 0 0 var(--green),inset -2px 0 0 var(--green)}
+th.selcol{color:var(--green-d)}
+.mk{font-size:9px;color:var(--mute);margin-left:3px;vertical-align:1px}
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+.tscroll table{min-width:780px}
+.foot{text-align:center;color:var(--mute);font-size:11px;margin-top:34px;letter-spacing:.5px}
+.foot b{color:var(--green-d)}
+.conc{background:var(--ink);border-radius:14px;padding:22px 24px;margin-top:18px}
+.conc .lbl{font-size:11px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.conc p{font-size:13.5px;line-height:1.65;color:#e8ebef;margin-bottom:10px}
+.conc p:last-child{margin-bottom:0}.conc b{color:var(--green)}
+.action{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:6px}
+.act{background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--green);border-radius:10px;padding:18px}
+.act .d{font-size:10px;color:var(--green-d);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.act .h{font-size:14px;font-weight:600;margin-bottom:7px;color:var(--ink);line-height:1.35}
+.act .p{font-size:12px;color:var(--mute);line-height:1.55}
+.act .imp{font-size:11.5px;color:var(--green-d);font-weight:600;margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.warn{border-left-color:var(--red)} .warn .d{color:var(--red)} .warn .imp{color:var(--red)}
+.amber{border-left-color:var(--amber)} .amber .d{color:var(--amber)} .amber .imp{color:var(--amber)}
+.pill{font-size:10px;padding:3px 10px;border-radius:12px;font-weight:600;white-space:nowrap;display:inline-block}
+.p-ig{background:#fbeaf4;color:var(--ig)}
+.p-fb{background:#e8f1fe;color:var(--fb)}
+.p-al{background:var(--red-soft);color:var(--red)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.sp{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:20px;border-top:3px solid var(--green)}
+.sp.ig{border-top-color:var(--ig)} .sp.fb{border-top-color:var(--fb)}
+.sp .t{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mute)}
+.sp.ig .t{color:var(--ig)} .sp.fb .t{color:var(--fb)}
+.sp .b{font-size:32px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;margin:8px 0 2px}
+.sp .m{font-size:11.5px;color:var(--mute);line-height:1.5}
+.note{font-size:11.5px;color:var(--mute);line-height:1.6;margin-top:14px;padding:14px 16px;background:var(--panel2);border-radius:10px;border-left:3px solid var(--amber)}
+.note b{color:var(--amber)}
+@media(max-width:880px){.grid,.grid2,.split{grid-template-columns:1fr}.head h1{font-size:19px}.kpi .val{font-size:23px}.filterbar{position:static}.fnow{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div>
+      <div class="brand"><span class="logo">keep<b>ads</b><span class="dot"></span></span><span class="tagline">Performance &amp; Estratégia</span></div>
+      <div class="eyebrow">Relatório de Redes Sociais · Instagram + Facebook</div>
+      <h1>Supermercado <b>Violeta</b> · 2026</h1>
+      <div class="sub">Meta Business Suite · 10 lojas · São Paulo</div>
+    </div>
+    <div class="tag" id="tagPer">7 meses analisados</div>
+  </div>
+
+  <div class="filterbar">
+    <span class="flbl">Período</span>
+    <div class="chips" id="chips"></div>
+    <span class="fnow" id="fnow">Todo o período</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-v="exec">Visão Geral</button>
+    <button class="tab" data-v="comp">Comparativo Mensal</button>
+    <button class="tab" data-v="ig">Instagram</button>
+    <button class="tab" data-v="fb">Facebook</button>
+    <button class="tab" data-v="acao">Leitura e Ações</button>
+  </div>
+
+  <!-- VISAO GERAL -->
+  <div class="view active" id="v-exec">
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Visualizações</div><div class="val green" id="k1"></div><div class="meta">Instagram + Facebook</div></div>
+      <div class="kpi"><div class="lbl">Contas alcançadas</div><div class="val" id="k2"></div><div class="meta">pessoas únicas impactadas</div></div>
+      <div class="kpi"><div class="lbl">Interações</div><div class="val" id="k3"></div><div class="meta">curtidas, coment. e salvos</div></div>
+      <div class="kpi"><div class="lbl">Cliques no link</div><div class="val green" id="k4"></div><div class="meta">tráfego enviado ao destino</div></div>
+      <div class="kpi"><div class="lbl">Visitas ao perfil</div><div class="val" id="k5"></div><div class="meta">média de <span id="k5b"></span>/mês</div></div>
+      <div class="kpi"><div class="lbl">Novos seguidores</div><div class="val green" id="k6"></div><div class="meta">nas duas plataformas</div></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Funil de passagem</h3>
+      <div class="h-sub">Cada etapa medida contra a anterior. Número solto mostra volume, taxa de passagem mostra onde a atenção deixa de avançar.</div>
+      <div class="funnel" id="funil"></div>
+      <div class="formula">
+        <span>TAXA <b>=</b> etapa atual sobre etapa anterior</span>
+        <span style="color:var(--green)">+</span>
+        <span>LEITURA <b>=</b> referência de mercado + tendência do próprio histórico</span>
+      </div>
+      <div class="note" style="border-left-color:var(--green)"><b>Sobre as referências.</b> As faixas indicadas são benchmark de varejo alimentar local e servem como parâmetro de leitura. A meta definitiva da operação nasce do histórico da própria marca, que este relatório começa a construir.</div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Alcance por plataforma</h3>
+        <div class="h-sub">Contas alcançadas no Instagram e visualizadores no Facebook</div>
+        <div class="chart-box"><canvas id="chAlc"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Divisão do alcance</h3>
+        <div class="h-sub">Peso de cada canal no período selecionado</div>
+        <div class="chart-sm"><canvas id="chPie"></canvas></div>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Visualizações por plataforma</h3>
+        <div class="h-sub">Volume total de exibições de conteúdo</div>
+        <div class="chart-sm"><canvas id="chViews"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Cliques no link por plataforma</h3>
+        <div class="h-sub">Tráfego enviado para tabloide e e-commerce</div>
+        <div class="chart-sm"><canvas id="chCli"></canvas></div>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="sp ig">
+        <div class="t">Instagram</div>
+        <div class="b" id="spIG"></div>
+        <div class="m" id="spIGm"></div>
+      </div>
+      <div class="sp fb">
+        <div class="t">Facebook</div>
+        <div class="b" id="spFB"></div>
+        <div class="m" id="spFBm"></div>
+      </div>
+    </div>
+
+    <div class="insight"><h3>Leitura executiva</h3><div id="insExec"></div></div>
+  </div>
+
+  <!-- COMPARATIVO -->
+  <div class="view" id="v-comp">
+    <div class="card full">
+      <div class="chead">
+        <div>
+          <h3>Consolidado mês a mês · Instagram + Facebook</h3>
+          <div class="h-sub">Meses fora do filtro aparecem esmaecidos como referência de comparação</div>
+        </div>
+        <div class="toggle" data-t="comp">
+          <button class="on" data-m="vol">Volumes</button>
+          <button data-m="tax">Taxas de passagem</button>
+        </div>
+      </div>
+      <div class="tscroll"><table id="tabComp"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <div class="chead">
+        <div>
+          <h3>Comparativo de taxas de passagem</h3>
+          <div class="h-sub">Taxas nas linhas e meses nas colunas. A coluna do mês filtrado fica destacada.</div>
+        </div>
+        <div class="toggle" data-t="tx">
+          <button class="on" data-m="cons">Consolidado</button>
+          <button data-m="ig">Instagram</button>
+          <button data-m="fb">Facebook</button>
+        </div>
+      </div>
+      <div class="tscroll"><table id="tabTax"><thead></thead><tbody></tbody></table></div>
+      <div class="note" id="taxNote"></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Taxas de passagem ao longo do tempo</h3>
+      <div class="h-sub">Evolução percentual das transições consolidadas</div>
+      <div class="chart-box"><canvas id="chTax"></canvas></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Evolução consolidada</h3>
+      <div class="h-sub">Alcance total em barras e interações totais em linha</div>
+      <div class="chart-box"><canvas id="chComp"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Visitas ao perfil</h3>
+        <div class="h-sub">Instagram e Facebook empilhados</div>
+        <div class="chart-sm"><canvas id="chVis"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Novos seguidores</h3>
+        <div class="h-sub">Instagram e Facebook empilhados</div>
+        <div class="chart-sm"><canvas id="chSeg"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight"><h3>O que a variação mostra</h3><div id="insComp"></div></div>
+  </div>
+
+  <!-- INSTAGRAM -->
+  <div class="view" id="v-ig">
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Visualizações</div><div class="val ig" id="ig1"></div><div class="meta">média de <span id="ig1b"></span>/mês</div></div>
+      <div class="kpi"><div class="lbl">Contas alcançadas</div><div class="val" id="ig2"></div><div class="meta">no período selecionado</div></div>
+      <div class="kpi"><div class="lbl">Interações</div><div class="val" id="ig3"></div><div class="meta" id="ig3b"></div></div>
+      <div class="kpi"><div class="lbl">Cliques no link</div><div class="val" id="ig4"></div><div class="meta" id="ig4b"></div></div>
+      <div class="kpi"><div class="lbl">Visitas ao perfil</div><div class="val" id="ig5"></div><div class="meta">média de <span id="ig5b"></span>/mês</div></div>
+      <div class="kpi"><div class="lbl">Visita p/ seguidor</div><div class="val ig" id="ig6"></div><div class="meta" id="ig6b"></div></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Funil de passagem · Instagram</h3>
+      <div class="h-sub">Transições do canal de base</div>
+      <div class="funnel" id="funilIG"></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Instagram · evolução</h3>
+      <div class="h-sub">Alcance em barras, interações e cliques em linha</div>
+      <div class="chart-box"><canvas id="chIG"></canvas></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <div class="chead">
+        <div><h3>Detalhamento mensal</h3><div class="h-sub">Indicadores do Instagram no período selecionado</div></div>
+        <div class="toggle" data-t="ig">
+          <button class="on" data-m="vol">Volumes</button>
+          <button data-m="tax">Taxas de passagem</button>
+        </div>
+      </div>
+      <div class="tscroll"><table id="tabIG"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="insight"><h3>Leitura do Instagram</h3><div id="insIG"></div></div>
+  </div>
+
+  <!-- FACEBOOK -->
+  <div class="view" id="v-fb">
+    <div class="kpis">
+      <div class="kpi"><div class="lbl">Visualizações</div><div class="val fb" id="fb1"></div><div class="meta">média de <span id="fb1b"></span>/mês</div></div>
+      <div class="kpi"><div class="lbl">Visualizadores</div><div class="val" id="fb2"></div><div class="meta">no período selecionado</div></div>
+      <div class="kpi"><div class="lbl">Interações</div><div class="val" id="fb3"></div><div class="meta" id="fb3b"></div></div>
+      <div class="kpi"><div class="lbl">Cliques no link</div><div class="val fb" id="fb4"></div><div class="meta" id="fb4b"></div></div>
+      <div class="kpi"><div class="lbl">Visitas à página</div><div class="val" id="fb5"></div><div class="meta">média de <span id="fb5b"></span>/mês</div></div>
+      <div class="kpi"><div class="lbl">Visita p/ clique</div><div class="val fb" id="fb6"></div><div class="meta" id="fb6b"></div></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Funil de passagem · Facebook</h3>
+      <div class="h-sub">Transições do canal de tráfego</div>
+      <div class="funnel" id="funilFB"></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Facebook · evolução</h3>
+      <div class="h-sub">Visualizadores em barras, interações e cliques em linha</div>
+      <div class="chart-box"><canvas id="chFB"></canvas></div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <div class="chead">
+        <div><h3>Detalhamento mensal</h3><div class="h-sub">Indicadores do Facebook no período selecionado</div></div>
+        <div class="toggle" data-t="fb">
+          <button class="on" data-m="vol">Volumes</button>
+          <button data-m="tax">Taxas de passagem</button>
+        </div>
+      </div>
+      <div class="tscroll"><table id="tabFB"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="insight"><h3>Leitura do Facebook</h3><div id="insFB"></div></div>
+  </div>
+
+  <!-- ACOES -->
+  <div class="view" id="v-acao">
+    <div class="card full">
+      <h3>Números do período selecionado</h3>
+      <div class="h-sub">Resumo que acompanha o filtro do topo</div>
+      <div class="kpis" style="margin-bottom:0">
+        <div class="kpi"><div class="lbl">Alcance total</div><div class="val green" id="a1"></div><div class="meta">Instagram + Facebook</div></div>
+        <div class="kpi"><div class="lbl">Cliques enviados</div><div class="val" id="a2"></div><div class="meta">sem rastreio confirmado</div></div>
+        <div class="kpi"><div class="lbl">Visitas aos perfis</div><div class="val" id="a3"></div><div class="meta">audiência de captação</div></div>
+        <div class="kpi"><div class="lbl">Seguidores captados</div><div class="val green" id="a4"></div><div class="meta" id="a4b"></div></div>
+      </div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Comparativo contra a referência de mercado</h3>
+      <div class="h-sub">Como cada taxa se compara ao parâmetro do varejo alimentar local</div>
+      <div class="tscroll">
+        <table id="tabBench">
+          <thead><tr>
+            <th>Taxa de passagem</th><th class="r">Instagram</th><th class="r">Facebook</th>
+            <th class="r">Consolidado</th><th class="r">Referência</th><th>Situação</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Destaques do período</h3>
+      <div class="h-sub">Principais leituras de janeiro a julho de 2026</div>
+      <div class="tscroll">
+        <table>
+          <thead><tr><th>Destaque</th><th>Canal</th><th>Leitura</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Crescimento consistente de alcance</b><br><span style="color:var(--mute);font-size:11.5px">janeiro a julho</span></td>
+              <td><span class="pill p-fb">Ambos</span></td>
+              <td>O alcance somado passou de 1,0 milhão em janeiro para 3,5 milhões em julho, com aceleração a partir de abril. A marca vem sendo encontrada por mais gente a cada mês.</td>
+            </tr>
+            <tr>
+              <td><b>Julho foi o melhor mês da série</b><br><span style="color:var(--mute);font-size:11.5px">82,8 mil interações</span></td>
+              <td><span class="pill p-fb">Ambos</span></td>
+              <td>Alta de 30,4% sobre junho em interações e o maior volume de novos seguidores do período, com 3,5 mil pessoas entrando na base.</td>
+            </tr>
+            <tr>
+              <td><b>Entrada do funil acima da referência</b><br><span style="color:var(--mute);font-size:11.5px">8,4% de alcance para visita</span></td>
+              <td><span class="pill p-fb">Ambos</span></td>
+              <td>A referência do varejo alimentar fica entre 3% e 6%. O conteúdo desperta interesse suficiente para a pessoa parar o scroll e ir até o perfil da marca.</td>
+            </tr>
+            <tr>
+              <td><b>Facebook concentra o clique</b><br><span style="color:var(--mute);font-size:11.5px">110,7 mil de 158,4 mil</span></td>
+              <td><span class="pill p-fb">Facebook</span></td>
+              <td>É o canal que leva o cliente até a oferta, com taxa de visita para clique de 12,5%, dentro da faixa esperada de 8% a 15%.</td>
+            </tr>
+            <tr>
+              <td><b>Instagram concentra a base</b><br><span style="color:var(--mute);font-size:11.5px">16,9 mil de 20,2 mil seguidores</span></td>
+              <td><span class="pill p-ig">Instagram</span></td>
+              <td>Entrega o dobro de interação sobre alcance em relação ao Facebook. É o canal de relacionamento e de construção de comunidade em torno da marca.</td>
+            </tr>
+            <tr>
+              <td><b>Oportunidade na conversão em cadastro</b><br><span style="color:var(--mute);font-size:11.5px">3,2% de visita para seguidor</span></td>
+              <td><span class="pill p-ig">Instagram</span></td>
+              <td>A referência fica entre 5% e 8%. Com 76,6 mil visitas mensais ao perfil, é o ponto de maior ganho disponível hoje e não depende de aumento de investimento.</td>
+            </tr>
+            <tr>
+              <td><b>Frequência alinhada ao modelo</b><br><span style="color:var(--mute);font-size:11.5px">6,8 exibições por pessoa</span></td>
+              <td><span class="pill p-fb">Ambos</span></td>
+              <td>Em varejo com oferta diária, a repetição no raio da loja é o que fixa o preço na memória. O Instagram já opera em 9,6x e o Facebook, em 5,2x, tem espaço para crescer.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="note" style="border-left-color:var(--green)"><b>Sobre os dados.</b> Números extraídos do Meta Business Suite, referentes ao desempenho das páginas de Instagram e Facebook do Supermercado Violeta entre janeiro e julho de 2026. As faixas de referência citadas são benchmark de varejo alimentar local e servem como parâmetro inicial, até que o histórico da própria operação defina a meta definitiva.</div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Próximos passos</h3>
+      <div class="h-sub">Ações ordenadas por facilidade de execução e retorno sobre o fluxo de loja</div>
+      <div class="action">
+        <div class="act">
+          <div class="d">Curto prazo</div>
+          <div class="h">Ativar o Clube Violeta e Você no perfil</div>
+          <div class="p">Link fixo de cadastro na bio, destaque fixado no perfil e chamada diária nos Stories, aproveitando as 200 mil visitas mensais que os perfis já recebem.</div>
+          <div class="imp">Eleva a taxa de visita para seguidor de 3,2% para 5%</div>
+        </div>
+        <div class="act">
+          <div class="d">Curto prazo</div>
+          <div class="h">Concluir o rastreamento do e-commerce</div>
+          <div class="p">Finalizar a configuração de Pixel e eventos junto ao SiteMercado e ao Violeta Express, com apoio da equipe técnica dos fornecedores.</div>
+          <div class="imp">Passa a mostrar a venda gerada pelas redes</div>
+        </div>
+        <div class="act amber">
+          <div class="d">Médio prazo</div>
+          <div class="h">Definir a função de cada canal</div>
+          <div class="p">Facebook direcionado ao tabloide e ao e-commerce, onde já concentra o clique. Instagram direcionado à presença no bairro e à captação de Clube, onde já concentra a base.</div>
+          <div class="imp">Cada canal passa a operar na sua força</div>
+        </div>
+        <div class="act amber">
+          <div class="d">Médio prazo</div>
+          <div class="h">Evoluir o formato de criativo</div>
+          <div class="p">Vídeo curto de 15 a 30 segundos, um produto por peça, preço nos 2 primeiros segundos e nome do bairro da loja na arte, trocado junto com a oferta do dia.</div>
+          <div class="imp">Sustenta a frequência alta sem desgaste de audiência</div>
+        </div>
+        <div class="act">
+          <div class="d">Contínuo</div>
+          <div class="h">Ampliar a presença do Facebook no raio das lojas</div>
+          <div class="p">O canal opera em 5,2 exibições por pessoa, abaixo das 8x que o modelo de oferta diária pede. Há espaço para mais presença sem precisar abrir público novo.</div>
+          <div class="imp">Mais lembrança de preço na vizinhança de cada unidade</div>
+        </div>
+        <div class="act">
+          <div class="d">Contínuo</div>
+          <div class="h">Ajustar a oferta ao perfil de cada praça</div>
+          <div class="p">Aplicar o mapeamento de perfil por região já existente, diferenciando as unidades de vizinhança das unidades de destino na comunicação.</div>
+          <div class="imp">Aumenta a relevância local de cada peça</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conc">
+      <div class="lbl">Conclusão</div>
+      <p>A operação chega a julho no <b>melhor momento da série</b>. O alcance cresceu de forma consistente, o conteúdo desperta interesse acima da referência do setor e a marca é encontrada por mais gente a cada mês.</p>
+      <p>Os dois canais já mostram vocações claras. O <b>Facebook leva o cliente até a oferta</b> e o <b>Instagram constrói a base de relacionamento</b>. Trabalhar cada um dentro da sua função é o próximo passo natural do trabalho.</p>
+      <p>As duas maiores oportunidades estão ao alcance da mão e <b>não dependem de aumento de investimento</b>: transformar as 200 mil visitas mensais aos perfis em cadastros no Clube e concluir a medição do e-commerce, para enxergar a venda que as redes já vêm gerando.</p>
+    </div>
+  </div>
+
+  <div class="foot">Relatório produzido pela <b>keepads</b> · Dados: Meta Business Suite · Janeiro a Julho de 2026</div>
+</div>
+
+<script>
+const M  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul'];
+const ML = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho'];
+const IG = {
+  views:[7200000,7300000,5600000,8900000,9600000,10400000,11800000],
+  alc:[381400,566900,72600,1300000,1100000,1500000,1400000],
+  int:[32900,34500,31000,38900,38000,38200,52100],
+  cli:[5700,989,5,9800,7900,10700,12600],
+  vis:[76000,71200,77000,84100,74700,70100,83000],
+  seg:[2800,1800,2100,2500,2400,2400,2900]
+};
+const FB = {
+  views:[6000000,5700000,3200000,6400000,6600000,14100000,13100000],
+  alc:[631600,1200000,226300,2000000,1600000,2900000,2100000],
+  int:[28300,28300,21800,18300,22900,25300,30700],
+  cli:[5500,11300,2000,20600,12400,30000,28900],
+  vis:[125300,116100,125700,135400,126900,120500,133700],
+  seg:[484,433,409,456,466,466,631]
+};
+const K = ['views','alc','int','cli','vis','seg'];
+const T = {}; K.forEach(k=>T[k]=IG[k].map((v,i)=>v+FB[k][i]));
+
+const fmt = n => {
+  if(n>=1000000) return (n/1000000).toFixed(1).replace('.',',')+' mi';
+  if(n>=1000) return (n/1000).toFixed(1).replace('.',',')+' mil';
+  return Math.round(n).toLocaleString('pt-BR');
+};
+const fmtN = n => Math.round(n).toLocaleString('pt-BR');
+const p1 = n => n.toFixed(1).replace('.',',');
+const p2 = n => n.toFixed(2).replace('.',',');
+const pctTag = (cur,prev) => {
+  if(!prev) return '';
+  const v=((cur-prev)/prev)*100, cls=v>0?'up':(v<0?'dn':'neu'), s=v>0?'+':'';
+  return '<div class="'+cls+'">'+s+p1(v)+'%</div>';
+};
+const ppTag = (cur,prev) => {
+  if(prev===undefined||prev===null||!isFinite(prev)) return '';
+  const v=cur-prev, cls=v>0?'up':(v<0?'dn':'neu'), s=v>0?'+':'';
+  return '<div class="'+cls+'">'+s+p1(v)+' p.p.</div>';
+};
+
+// Definicao das taxas de passagem
+const RATES = [
+  {id:'av', lbl:'Alcance para visita',    num:'vis',  den:'alc',  ref:[3,6],   unit:'%', better:'up',
+   desc:(o)=>fmt(o.vis)+' visitas em '+fmt(o.alc)+' contas alcançadas.'},
+  {id:'ai', lbl:'Alcance para interação', num:'int',  den:'alc',  ref:[1,2],   unit:'%', better:'up',
+   desc:(o)=>fmt(o.int)+' interações sobre o alcance do período.'},
+  {id:'vc', lbl:'Visita para clique',     num:'cli',  den:'vis',  ref:[8,15],  unit:'%', better:'up',
+   desc:(o)=>fmtN(o.cli)+' cliques a partir das visitas ao perfil.'},
+  {id:'vs', lbl:'Visita para seguidor',   num:'seg',  den:'vis',  ref:[5,8],   unit:'%', better:'up',
+   desc:(o)=>fmtN(o.seg)+' novos seguidores a partir das visitas.'},
+  {id:'fq', lbl:'Frequência por pessoa',  num:'views',den:'alc',  ref:[8,12],  unit:'x', better:'up',
+   refLabel:'acima de 8x',
+   desc:(o)=>fmt(o.views)+' exibições para '+fmt(o.alc)+' pessoas.'}
+];
+const rate = (o,r) => o[r.den] ? (r.unit==='%' ? o[r.num]/o[r.den]*100 : o[r.num]/o[r.den]) : 0;
+const rateAt = (D,r,i) => D[r.den][i] ? (r.unit==='%' ? D[r.num][i]/D[r.den][i]*100 : D[r.num][i]/D[r.den][i]) : 0;
+const status = (v,r) => {
+  if(r.better==='down') return v<=r.ref[1] ? 'ok' : (v<=r.ref[1]*1.5 ? 'mid' : 'bad');
+  if(v>=r.ref[0]) return 'ok';
+  if(v>=r.ref[0]*0.6) return 'mid';
+  return 'bad';
+};
+const statusTxt = (st,r) => {
+  if(r.better==='down') return st==='ok'?'Dentro da referência':(st==='mid'?'Acima do ideal':'Acima do limite');
+  return st==='ok'?'Dentro da referência':(st==='mid'?'Abaixo do ideal':'Abaixo da referência');
+};
+const refTxt = r => r.refLabel ? r.refLabel : (r.unit==='%' ? p1(r.ref[0])+'% a '+p1(r.ref[1])+'%' : p1(r.ref[0])+'x a '+p1(r.ref[1])+'x');
+const val = (v,r) => r.unit==='%' ? p1(v)+'%' : p1(v)+'x';
+
+let SEL = 'all';
+const MODE = {comp:'vol', ig:'vol', fb:'vol', tx:'cons'};
+const idxs = () => SEL==='all' ? [0,1,2,3,4,5,6] : [SEL];
+const pick = (arr,ix) => ix.map(i=>arr[i]);
+const sum  = a => a.reduce((x,y)=>x+y,0);
+const S    = (o,k,ix) => sum(pick(o[k],ix));
+
+(function(){
+  const c=document.getElementById('chips');
+  let h='<button class="chip active" data-m="all">Todo o período</button>';
+  M.forEach((m,i)=>{h+='<button class="chip" data-m="'+i+'">'+m+'</button>';});
+  c.innerHTML=h;
+  c.querySelectorAll('.chip').forEach(b=>b.addEventListener('click',()=>{
+    c.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    SEL = b.dataset.m==='all' ? 'all' : parseInt(b.dataset.m,10);
+    render();
+  }));
+})();
+
+document.querySelectorAll('.toggle').forEach(tg=>{
+  tg.querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{
+    tg.querySelectorAll('button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    MODE[tg.dataset.t]=b.dataset.m;
+    render();
+  }));
+});
+
+const charts={};
+function mk(id,cfg){ if(charts[id]) charts[id].destroy(); charts[id]=new Chart(document.getElementById(id),cfg); }
+Chart.defaults.font.family='Poppins';
+Chart.defaults.font.size=11;
+Chart.defaults.color='#6b7280';
+const GREEN='#00CA9E', GREEND='#00a884', IGC='#C13584', FBC='#1877F2', INK='#0D0D0D', AMB='#b8860b', RED='#ef5b4c';
+const ax = {grid:{color:'#e8ebef'},ticks:{callback:v=>fmt(v)}};
+const lg = {legend:{position:'bottom',labels:{boxWidth:12,boxHeight:12,usePointStyle:true,pointStyle:'rectRounded',padding:16,font:{weight:'600'}}}};
+
+function funnelHTML(o){
+  let h='';
+  RATES.forEach(r=>{
+    const v=rate(o,r), st=status(v,r);
+    h+='<div class="fst '+st+'"><div class="fl">'+r.lbl+'</div><div class="fv">'+val(v,r)+'</div>'+
+       '<div class="fd">'+r.desc(o)+'</div><div class="fr">'+statusTxt(st,r)+' · ref. '+refTxt(r)+'</div></div>';
+  });
+  return h;
+}
+
+function render(){
+  const ix = idxs(), one = ix.length===1, L = pick(M,ix), n = ix.length;
+  const perLabel = SEL==='all' ? 'Janeiro a Julho de 2026' : ML[SEL]+' de 2026';
+  document.getElementById('fnow').textContent = SEL==='all' ? 'Todo o período' : ML[SEL];
+  document.getElementById('tagPer').textContent = SEL==='all' ? '7 meses analisados' : perLabel;
+
+  const t={}, ig={}, fb={};
+  K.forEach(k=>{t[k]=S(T,k,ix); ig[k]=S(IG,k,ix); fb[k]=S(FB,k,ix);});
+
+  // KPIs gerais
+  document.getElementById('k1').textContent=fmt(t.views);
+  document.getElementById('k2').textContent=fmt(t.alc);
+  document.getElementById('k3').textContent=fmt(t.int);
+  document.getElementById('k4').textContent=fmt(t.cli);
+  document.getElementById('k5').textContent=fmt(t.vis);
+  document.getElementById('k5b').textContent=fmt(t.vis/n);
+  document.getElementById('k6').textContent=fmtN(t.seg);
+
+  document.getElementById('funil').innerHTML  = funnelHTML(t);
+  document.getElementById('funilIG').innerHTML= funnelHTML(ig);
+  document.getElementById('funilFB').innerHTML= funnelHTML(fb);
+
+  document.getElementById('spIG').textContent=fmtN(ig.seg);
+  document.getElementById('spIGm').innerHTML='novos seguidores, '+p1(ig.seg/t.seg*100)+'% de tudo que foi captado. Taxa de visita para seguidor de <b style="color:var(--ig)">'+p1(ig.seg/ig.vis*100)+'%</b>, contra 0,4% do Facebook.';
+  document.getElementById('spFB').textContent=fmtN(fb.cli);
+  document.getElementById('spFBm').innerHTML='cliques no link, '+p1(fb.cli/t.cli*100)+'% do total. Taxa de visita para clique de <b style="color:var(--fb)">'+p1(fb.cli/fb.vis*100)+'%</b>, contra '+p1(ig.cli/ig.vis*100)+'% do Instagram.';
+
+  (function(){
+    const av=rate(t,RATES[0]), vs=rate(t,RATES[3]), fq=rate(t,RATES[4]);
+    let h='<p>Período analisado: <b>'+perLabel+'</b>. Somando as duas plataformas, <b>'+fmt(t.alc)+
+      ' contas alcançadas</b> geraram '+fmt(t.vis)+' visitas aos perfis, '+fmtN(t.cli)+' cliques e '+fmtN(t.seg)+' novos seguidores.</p>';
+    h+='<p>A primeira passagem do funil é o ponto forte. <b>'+p1(av)+'% do alcance vira visita ao perfil</b>, acima da faixa de referência de 3% a 6%. O conteúdo desperta interesse e a pessoa vai atrás da marca.</p>';
+    h+='<p>A maior oportunidade está na etapa seguinte. <b>'+p1(vs)+'% das visitas viram seguidor</b>, contra uma referência de 5% a 8%. Uma oferta de cadastro no caminho entre o perfil e o Clube resolve boa parte dessa diferença.</p>';
+    h+='<p>A frequência de <b>'+p1(fq)+' exibições por pessoa</b> é adequada ao modelo de oferta diária. Em varejo alimentar o objetivo é lembrança de preço no raio da loja, e repetição alta dentro da praça é o mecanismo que sustenta o fluxo, desde que o criativo seja renovado junto com a oferta.</p>';
+    document.getElementById('insExec').innerHTML=h;
+  })();
+
+  mk('chAlc',{type:'bar',data:{labels:L,datasets:[
+    {label:'Instagram',data:pick(IG.alc,ix),backgroundColor:IGC,borderRadius:6,maxBarThickness:70},
+    {label:'Facebook',data:pick(FB.alc,ix),backgroundColor:FBC,borderRadius:6,maxBarThickness:70}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{y:ax,x:{grid:{display:false}}}}});
+  mk('chPie',{type:'doughnut',data:{labels:['Facebook','Instagram'],
+    datasets:[{data:[fb.alc,ig.alc],backgroundColor:[FBC,IGC],borderWidth:0}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:lg}});
+  mk('chViews',{type:one?'bar':'line',data:{labels:L,datasets:[
+    {label:'Instagram',data:pick(IG.views,ix),borderColor:IGC,backgroundColor:one?IGC:'rgba(193,53,132,.08)',fill:!one,tension:.35,borderWidth:3,pointRadius:5,borderRadius:6,maxBarThickness:70},
+    {label:'Facebook',data:pick(FB.views,ix),borderColor:FBC,backgroundColor:one?FBC:'rgba(24,119,242,.08)',fill:!one,tension:.35,borderWidth:3,pointRadius:5,borderRadius:6,maxBarThickness:70}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{y:ax,x:{grid:{display:false}}}}});
+  mk('chCli',{type:'bar',data:{labels:L,datasets:[
+    {label:'Instagram',data:pick(IG.cli,ix),backgroundColor:IGC,borderRadius:5,maxBarThickness:70},
+    {label:'Facebook',data:pick(FB.cli,ix),backgroundColor:FBC,borderRadius:5,maxBarThickness:70}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{y:ax,x:{grid:{display:false}}}}});
+
+  // ---- Tabela comparativa
+  (function(){
+    const th=document.querySelector('#tabComp thead'), tb=document.querySelector('#tabComp tbody');
+    if(MODE.comp==='vol'){
+      th.innerHTML='<tr><th>Mês</th><th class="r">Visualizações</th><th class="r">Alcance</th><th class="r">Interações</th>'+
+        '<th class="r">Cliques</th><th class="r">Visitas perfil</th><th class="r">Seguidores</th></tr>';
+      let h='';
+      M.forEach((m,i)=>{
+        const off=(SEL!=='all'&&i!==SEL)?' class="off"':'';
+        h+='<tr'+off+'><td><b>'+m+' 2026</b></td>';
+        K.forEach(k=>{h+='<td class="r"><span class="num">'+fmt(T[k][i])+'</span>'+(i>0?pctTag(T[k][i],T[k][i-1]):'')+'</td>';});
+        h+='</tr>';
+      });
+      h+='<tr class="tot"><td>Total '+(SEL==='all'?'do período':ML[SEL])+'</td>';
+      K.forEach(k=>{h+='<td class="r">'+fmt(t[k])+'</td>';});
+      h+='</tr>';
+      tb.innerHTML=h;
+    } else {
+      th.innerHTML='<tr><th>Mês</th>'+RATES.map(r=>'<th class="r">'+r.lbl+'</th>').join('')+'</tr>';
+      let h='<tr class="ref"><td>Referência de mercado</td>'+RATES.map(r=>'<td class="r">'+refTxt(r)+'</td>').join('')+'</tr>';
+      M.forEach((m,i)=>{
+        const off=(SEL!=='all'&&i!==SEL)?' class="off"':'';
+        h+='<tr'+off+'><td><b>'+m+' 2026</b></td>';
+        RATES.forEach(r=>{
+          const v=rateAt(T,r,i), st=status(v,r), cls=st==='ok'?'g':(st==='mid'?'a':'r2');
+          const pv=i>0?rateAt(T,r,i-1):null;
+          h+='<td class="r"><span class="num '+cls+'">'+val(v,r)+'</span>'+(pv!==null?ppTag(v,pv):'')+'</td>';
+        });
+        h+='</tr>';
+      });
+      h+='<tr class="tot"><td>Média '+(SEL==='all'?'do período':ML[SEL])+'</td>'+
+         RATES.map(r=>'<td class="r">'+val(rate(t,r),r)+'</td>').join('')+'</tr>';
+      tb.innerHTML=h;
+    }
+  })();
+
+  // ---- Tabela transposta de taxas de passagem
+  (function(){
+    const src = MODE.tx==='ig' ? IG : (MODE.tx==='fb' ? FB : T);
+    const aggr = MODE.tx==='ig' ? ig : (MODE.tx==='fb' ? fb : t);
+    const nome = MODE.tx==='ig' ? 'Instagram' : (MODE.tx==='fb' ? 'Facebook' : 'consolidado');
+    const th=document.querySelector('#tabTax thead'), tb=document.querySelector('#tabTax tbody');
+    th.innerHTML='<tr><th>Taxa de passagem</th>'+
+      M.map((m,i)=>'<th class="r'+(SEL===i?' selcol':'')+'">'+m+'</th>').join('')+
+      '<th class="r">Média</th><th class="r">Referência</th><th>Situação</th></tr>';
+    let h='';
+    RATES.forEach(r=>{
+      const serie=M.map((_,i)=>rateAt(src,r,i));
+      const best=serie.indexOf(r.better==='down'?Math.min(...serie):Math.max(...serie));
+      const worst=serie.indexOf(r.better==='down'?Math.max(...serie):Math.min(...serie));
+      const med=rate(aggr,r), st=status(med,r);
+      const cls=st==='ok'?'g':(st==='mid'?'a':'r2');
+      const pillCls=st==='ok'?'p-fb':(st==='mid'?'p-ig':'p-al');
+      h+='<tr><td><b>'+r.lbl+'</b></td>';
+      serie.forEach((v,i)=>{
+        const sc=status(v,r), c=sc==='ok'?'g':(sc==='mid'?'a':'r2');
+        const mark=i===best?' ▲':(i===worst?' ▼':'');
+        h+='<td class="r'+(SEL===i?' selcol':'')+'"><span class="num '+c+'">'+val(v,r)+
+           '</span><span class="mk">'+mark+'</span></td>';
+      });
+      h+='<td class="r"><span class="num '+cls+'">'+val(med,r)+'</span></td>'+
+         '<td class="r"><span class="num" style="color:var(--mute);font-weight:600">'+refTxt(r)+'</span></td>'+
+         '<td><span class="pill '+pillCls+'">'+statusTxt(st,r)+'</span></td></tr>';
+    });
+    tb.innerHTML=h;
+
+    const av=rate(aggr,RATES[0]), vs=rate(aggr,RATES[3]), fq=rate(aggr,RATES[4]);
+    const sv=M.map((_,i)=>rateAt(src,RATES[3],i));
+    const bs=sv.indexOf(Math.max(...sv));
+    document.getElementById('taxNote').innerHTML='<b>Como ler.</b> O triângulo para cima marca o melhor mês da linha e o para baixo o pior. '+
+      'No '+nome+', a entrada do funil está em '+val(av,RATES[0])+' e a saída em seguidor está em '+val(vs,RATES[3])+
+      ', com frequência de '+val(fq,RATES[4])+' por pessoa. O melhor mês de conversão em seguidor foi '+ML[bs]+', com '+val(sv[bs],RATES[3])+'.';
+  })();
+
+  mk('chTax',{type:'line',data:{labels:L,datasets:[
+    {label:'Alcance para visita',data:pick(T.alc.map((_,i)=>rateAt(T,RATES[0],i)),ix),borderColor:GREEND,tension:.35,borderWidth:3,pointRadius:5},
+    {label:'Alcance para interação',data:pick(T.alc.map((_,i)=>rateAt(T,RATES[1],i)),ix),borderColor:IGC,tension:.35,borderWidth:3,pointRadius:5},
+    {label:'Visita para clique',data:pick(T.alc.map((_,i)=>rateAt(T,RATES[2],i)),ix),borderColor:FBC,tension:.35,borderWidth:3,pointRadius:5},
+    {label:'Visita para seguidor',data:pick(T.alc.map((_,i)=>rateAt(T,RATES[3],i)),ix),borderColor:AMB,tension:.35,borderWidth:3,pointRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{
+      y:{grid:{color:'#e8ebef'},ticks:{callback:v=>p1(v)+'%'}},x:{grid:{display:false}}}}});
+
+  mk('chComp',{data:{labels:L,datasets:[
+    {type:'bar',label:'Alcance total',data:pick(T.alc,ix),backgroundColor:GREEN,borderRadius:6,yAxisID:'y',maxBarThickness:80},
+    {type:'line',label:'Interações totais',data:pick(T.int,ix),borderColor:INK,backgroundColor:INK,tension:.35,borderWidth:3,pointRadius:5,yAxisID:'y1'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{
+      y:{...ax,position:'left'},y1:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}},x:{grid:{display:false}}}}});
+  mk('chVis',{type:'bar',data:{labels:L,datasets:[
+    {label:'Instagram',data:pick(IG.vis,ix),backgroundColor:IGC,borderRadius:5,stack:'a',maxBarThickness:70},
+    {label:'Facebook',data:pick(FB.vis,ix),backgroundColor:FBC,borderRadius:5,stack:'a',maxBarThickness:70}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{y:{...ax,stacked:true},x:{grid:{display:false},stacked:true}}}});
+  mk('chSeg',{type:'bar',data:{labels:L,datasets:[
+    {label:'Instagram',data:pick(IG.seg,ix),backgroundColor:IGC,borderRadius:5,stack:'a',maxBarThickness:70},
+    {label:'Facebook',data:pick(FB.seg,ix),backgroundColor:FBC,borderRadius:5,stack:'a',maxBarThickness:70}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{y:{...ax,stacked:true},x:{grid:{display:false},stacked:true}}}});
+
+  (function(){
+    let h='';
+    if(one){
+      const i=ix[0];
+      h+='<p>Em <b>'+ML[i]+'</b>: '+fmt(T.alc[i])+' contas alcançadas, '+fmt(T.vis[i])+' visitas, '+fmtN(T.cli[i])+
+         ' cliques e '+fmtN(T.seg[i])+' novos seguidores.</p>';
+      h+='<p>Taxas do mês: alcance para visita <b>'+p1(rateAt(T,RATES[0],i))+'%</b>, visita para clique <b>'+
+         p1(rateAt(T,RATES[2],i))+'%</b>, visita para seguidor <b>'+p1(rateAt(T,RATES[3],i))+'%</b> e frequência de <b>'+
+         p1(rateAt(T,RATES[4],i))+'x</b> por pessoa.</p>';
+      if(i>0){
+        const va=((T.alc[i]-T.alc[i-1])/T.alc[i-1]*100), vi=((T.int[i]-T.int[i-1])/T.int[i-1]*100);
+        h+='<p>Contra '+ML[i-1]+', o alcance variou <b>'+(va>0?'+':'')+p1(va)+'%</b> e as interações <b>'+(vi>0?'+':'')+p1(vi)+'%</b>.</p>';
+      }
+    } else {
+      const mxi=ix.reduce((a,b)=>T.int[a]>T.int[b]?a:b), mxa=ix.reduce((a,b)=>T.alc[a]>T.alc[b]?a:b);
+      const bs=ix.reduce((a,b)=>rateAt(T,RATES[3],a)>rateAt(T,RATES[3],b)?a:b);
+      h+='<p><b>'+ML[mxi]+'</b> foi o mês mais forte em interações, com '+fmt(T.int[mxi])+
+         '. <b>'+ML[mxa]+'</b> foi o pico de alcance, com '+fmt(T.alc[mxa])+' contas.</p>';
+      h+='<p>Em taxa de passagem a leitura muda. O melhor mês de conversão de visita em seguidor foi <b>'+ML[bs]+
+         '</b>, com '+p1(rateAt(T,RATES[3],bs))+'%. Volume alto e taxa alta nem sempre caem no mesmo mês, e é a taxa que indica onde a operação está funcionando de fato.</p>';
+      h+='<p>Use o alternador acima da tabela para trocar entre volume e taxa. O volume mostra o tamanho da operação e a taxa mostra a eficiência de cada etapa.</p>';
+    }
+    document.getElementById('insComp').innerHTML=h;
+  })();
+
+  // ---- Instagram
+  document.getElementById('ig1').textContent=fmt(ig.views);
+  document.getElementById('ig1b').textContent=fmt(ig.views/n);
+  document.getElementById('ig2').textContent=fmt(ig.alc);
+  document.getElementById('ig3').textContent=fmt(ig.int);
+  document.getElementById('ig3b').textContent=p1(ig.int/ig.alc*100)+'% do alcance interagiu';
+  document.getElementById('ig4').textContent=fmt(ig.cli);
+  document.getElementById('ig4b').textContent=p1(ig.cli/t.cli*100)+'% do total das duas redes';
+  document.getElementById('ig5').textContent=fmt(ig.vis);
+  document.getElementById('ig5b').textContent=fmt(ig.vis/n);
+  document.getElementById('ig6').textContent=p1(ig.seg/ig.vis*100)+'%';
+  document.getElementById('ig6b').textContent=fmtN(ig.seg)+' seguidores · ref. 5% a 8%';
+
+  tableFor('tabIG', IG, ig, 'ig', 'Visitas perfil');
+
+  (function(){
+    const tx=ig.seg/ig.vis*100, gap=Math.round(ig.vis*0.05)-ig.seg;
+    let h='<p>O Instagram é o motor de base. Concentra <b>'+p1(ig.seg/t.seg*100)+'% dos novos seguidores</b> do período, com '+
+      fmt(ig.vis/n)+' visitas ao perfil por mês e taxa de interação sobre alcance de <b>'+p1(ig.int/ig.alc*100)+'%</b>, o dobro do Facebook.</p>';
+    h+='<p>A passagem de visita para seguidor está em <b>'+p1(tx)+'%</b>, contra referência de 5% a 8%.'+
+       (gap>0?' Chegar à faixa de referência representa cerca de <b>'+fmtN(gap)+' cadastros</b> a mais no período, sem aumento de investimento.':'')+'</p>';
+    h+='<p>A frequência de <b>'+p1(ig.views/ig.alc)+'x</b> por pessoa está dentro do esperado para varejo com oferta diária, onde a repetição no raio é o que fixa o preço na memória. O ponto de atenção é garantir que o criativo mude junto com a oferta, para que a repetição some em vez de cansar.</p>';
+    document.getElementById('insIG').innerHTML=h;
+  })();
+
+  // ---- Facebook
+  document.getElementById('fb1').textContent=fmt(fb.views);
+  document.getElementById('fb1b').textContent=fmt(fb.views/n);
+  document.getElementById('fb2').textContent=fmt(fb.alc);
+  document.getElementById('fb3').textContent=fmt(fb.int);
+  document.getElementById('fb3b').textContent=p1(fb.int/fb.alc*100)+'% do alcance interagiu';
+  document.getElementById('fb4').textContent=fmt(fb.cli);
+  document.getElementById('fb4b').textContent=p1(fb.cli/t.cli*100)+'% do total das duas redes';
+  document.getElementById('fb5').textContent=fmt(fb.vis);
+  document.getElementById('fb5b').textContent=fmt(fb.vis/n);
+  document.getElementById('fb6').textContent=p1(fb.cli/fb.vis*100)+'%';
+  document.getElementById('fb6b').textContent='ref. 8% a 15%';
+
+  tableFor('tabFB', FB, fb, 'fb', 'Visitas página');
+
+  mk('chIG',{data:{labels:L,datasets:[
+    {type:'bar',label:'Alcance',data:pick(IG.alc,ix),backgroundColor:'rgba(193,53,132,.85)',borderRadius:6,yAxisID:'y',maxBarThickness:80},
+    {type:'line',label:'Interações',data:pick(IG.int,ix),borderColor:GREEND,tension:.35,borderWidth:3,pointRadius:5,yAxisID:'y1'},
+    {type:'line',label:'Cliques no link',data:pick(IG.cli,ix),borderColor:INK,borderDash:[6,4],tension:.35,borderWidth:2.5,pointRadius:5,yAxisID:'y1'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{
+      y:{...ax,position:'left'},y1:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}},x:{grid:{display:false}}}}});
+  mk('chFB',{data:{labels:L,datasets:[
+    {type:'bar',label:'Visualizadores',data:pick(FB.alc,ix),backgroundColor:'rgba(24,119,242,.85)',borderRadius:6,yAxisID:'y',maxBarThickness:80},
+    {type:'line',label:'Interações',data:pick(FB.int,ix),borderColor:GREEND,tension:.35,borderWidth:3,pointRadius:5,yAxisID:'y1'},
+    {type:'line',label:'Cliques no link',data:pick(FB.cli,ix),borderColor:INK,borderDash:[6,4],tension:.35,borderWidth:2.5,pointRadius:5,yAxisID:'y1'}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:lg,scales:{
+      y:{...ax,position:'left'},y1:{position:'right',grid:{display:false},ticks:{callback:v=>fmt(v)}},x:{grid:{display:false}}}}});
+
+  (function(){
+    const ctr=fb.cli/fb.vis*100, freq=fb.views/fb.alc;
+    let h='<p>O Facebook é o canal de tráfego. Entrega <b>'+fmtN(fb.cli)+' cliques no link</b> e converte <b>'+p1(ctr)+
+      '% das visitas em clique</b>, dentro da referência de 8% a 15% e bem acima do Instagram.</p>';
+    h+='<p>A frequência média é de <b>'+p1(freq)+' exibições por pessoa</b>, abaixo do Instagram e do ideal de 8x para varejo com oferta diária. Há espaço para aumentar a presença por pessoa dentro do raio de cada loja. A interação sobre alcance ficou em '+
+      p1(fb.int/fb.alc*100)+'%, o que indica que o formato atual de criativo entrega volume mas gera pouca resposta.</p>';
+    h+='<p>A captação de seguidor fica em <b>'+p1(fb.seg/fb.vis*100)+'%</b> das visitas, o que é esperado: o papel do Facebook nesta operação é levar a pessoa até a oferta, enquanto a construção de comunidade acontece no Instagram.</p>';
+    document.getElementById('insFB').innerHTML=h;
+  })();
+
+  // ---- Acoes
+  document.getElementById('a1').textContent=fmt(t.alc);
+  document.getElementById('a2').textContent=fmt(t.cli);
+  document.getElementById('a3').textContent=fmt(t.vis);
+  document.getElementById('a4').textContent=fmtN(t.seg);
+  document.getElementById('a4b').textContent=p1(t.seg/t.vis*100)+'% das visitas viraram seguidor';
+
+  (function(){
+    let h='';
+    RATES.forEach(r=>{
+      const vi=rate(ig,r), vf=rate(fb,r), vt=rate(t,r), st=status(vt,r);
+      const cls=st==='ok'?'g':(st==='mid'?'a':'r2');
+      const pillCls=st==='ok'?'p-fb':(st==='mid'?'p-ig':'p-al');
+      h+='<tr><td><b>'+r.lbl+'</b></td>'+
+         '<td class="r"><span class="num">'+val(vi,r)+'</span></td>'+
+         '<td class="r"><span class="num">'+val(vf,r)+'</span></td>'+
+         '<td class="r"><span class="num '+cls+'">'+val(vt,r)+'</span></td>'+
+         '<td class="r"><span class="num" style="color:var(--mute);font-weight:600">'+refTxt(r)+'</span></td>'+
+         '<td><span class="pill '+pillCls+'">'+statusTxt(st,r)+'</span></td></tr>';
+    });
+    document.querySelector('#tabBench tbody').innerHTML=h;
+  })();
+
+  function tableFor(tid, D, agg, key, visLabel){
+    const th=document.querySelector('#'+tid+' thead'), tb=document.querySelector('#'+tid+' tbody');
+    if(MODE[key]==='vol'){
+      th.innerHTML='<tr><th>Mês</th><th class="r">Visualizações</th><th class="r">Alcance</th><th class="r">Interações</th>'+
+        '<th class="r">Cliques</th><th class="r">'+visLabel+'</th><th class="r">Seguidores</th></tr>';
+      let h='';
+      M.forEach((m,i)=>{
+        if(SEL!=='all'&&i!==SEL) return;
+        h+='<tr><td><b>'+m+'</b></td>';
+        K.forEach(k=>{h+='<td class="r"><span class="num">'+(k==='seg'||k==='cli'?fmtN(D[k][i]):fmt(D[k][i]))+'</span></td>';});
+        h+='</tr>';
+      });
+      h+='<tr class="tot"><td>Total</td>'+K.map(k=>'<td class="r">'+fmt(agg[k])+'</td>').join('')+'</tr>';
+      tb.innerHTML=h;
+    } else {
+      th.innerHTML='<tr><th>Mês</th>'+RATES.map(r=>'<th class="r">'+r.lbl+'</th>').join('')+'</tr>';
+      let h='<tr class="ref"><td>Referência de mercado</td>'+RATES.map(r=>'<td class="r">'+refTxt(r)+'</td>').join('')+'</tr>';
+      M.forEach((m,i)=>{
+        if(SEL!=='all'&&i!==SEL) return;
+        h+='<tr><td><b>'+m+'</b></td>';
+        RATES.forEach(r=>{
+          const v=rateAt(D,r,i), st=status(v,r), cls=st==='ok'?'g':(st==='mid'?'a':'r2');
+          const pv=(i>0&&SEL==='all')?rateAt(D,r,i-1):null;
+          h+='<td class="r"><span class="num '+cls+'">'+val(v,r)+'</span>'+(pv!==null?ppTag(v,pv):'')+'</td>';
+        });
+        h+='</tr>';
+      });
+      h+='<tr class="tot"><td>Média</td>'+RATES.map(r=>'<td class="r">'+val(rate(agg,r),r)+'</td>').join('')+'</tr>';
+      tb.innerHTML=h;
+    }
+  }
+}
+
+document.querySelectorAll('.tab').forEach(tb=>{
+  tb.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    tb.classList.add('active');
+    document.getElementById('v-'+tb.dataset.v).classList.add('active');
+    Object.values(charts).forEach(c=>c.resize());
+  });
+});
+
+render();
+</script>
+</body>
+</html>
