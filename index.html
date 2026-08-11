@@ -157,6 +157,7 @@ th.selcol{color:var(--green-d)}
     <button class="tab" data-v="comp">Comparativo Mensal</button>
     <button class="tab" data-v="ig">Instagram</button>
     <button class="tab" data-v="fb">Facebook</button>
+    <button class="tab" data-v="pub">Público</button>
     <button class="tab" data-v="acao">Leitura e Ações</button>
   </div>
 
@@ -357,6 +358,65 @@ th.selcol{color:var(--green-d)}
     </div>
 
     <div class="insight"><h3>Leitura do Facebook</h3><div id="insFB"></div></div>
+  </div>
+
+
+  <!-- PUBLICO -->
+  <div class="view" id="v-pub">
+
+    <div class="card full" style="margin-bottom:18px">
+      <h3>Quem está sendo alcançado</h3>
+      <div class="h-sub">Recorte demográfico consolidado do período. Este bloco não varia com o filtro de mês do topo.</div>
+      <div class="kpis" style="margin-bottom:0">
+        <div class="kpi"><div class="lbl">Mulheres · alcance</div><div class="val green" id="d1"></div><div class="meta">e <span id="d1b"></span> dos cliques</div></div>
+        <div class="kpi"><div class="lbl">Homens · alcance</div><div class="val" id="d2"></div><div class="meta">e <span id="d2b"></span> dos cliques</div></div>
+        <div class="kpi"><div class="lbl">Público 45+</div><div class="val" id="d3"></div><div class="meta">do alcance, e <span id="d3b"></span> dos cliques</div></div>
+        <div class="kpi"><div class="lbl">Faixa que mais clica</div><div class="val green" id="d4"></div><div class="meta" id="d4b"></div></div>
+        <div class="kpi"><div class="lbl">Faixa que menos clica</div><div class="val" id="d5"></div><div class="meta" id="d5b"></div></div>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="sp">
+        <div class="t">Mulheres</div>
+        <div class="b" id="spW"></div>
+        <div class="m" id="spWm"></div>
+      </div>
+      <div class="sp" style="border-top-color:#4B5563">
+        <div class="t" style="color:#4B5563">Homens</div>
+        <div class="b" id="spM"></div>
+        <div class="m" id="spMm"></div>
+      </div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Alcance por faixa etária e gênero</h3>
+      <div class="h-sub">Volume de contas alcançadas em cada faixa. Mostra onde a marca aparece hoje.</div>
+      <div class="chart-box"><canvas id="chAge"></canvas></div>
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3>Taxa de clique por faixa e gênero</h3>
+        <div class="h-sub">Percentual do alcance de cada faixa que clicou no link.</div>
+        <div class="chart-sm"><canvas id="chCtr"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Participação no alcance contra participação no clique</h3>
+        <div class="h-sub">Onde a audiência entregue rende mais do que o seu tamanho.</div>
+        <div class="chart-sm"><canvas id="chShare"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card full" style="margin-top:18px">
+      <h3>Tabela completa por faixa etária</h3>
+      <div class="h-sub">Alcance, taxa de clique e cliques gerados. Índice acima de 1,00 indica faixa que clica mais do que o seu peso no alcance.</div>
+      <div class="tscroll"><table id="tabDem"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="insight"><h3>Leitura do público</h3><div id="insPub"></div></div>
+
+    <div class="note" id="notaPub"></div>
   </div>
 
   <!-- ACOES -->
@@ -899,17 +959,119 @@ function render(){
   }
 }
 
+
+/* ================= PUBLICO / DEMOGRAFIA ================= */
+const FX = ['18-24','25-34','35-44','45-54','55-64','65+'];
+const ALCW = [1940136,4845900,3956304,4011682,3905472,3425669];
+const ALCM = [1419821,4335359,3440866,3108647,2493064,1529062];
+const CTRW = [0.19,0.24,0.38,0.41,0.46,0.51];
+const CTRM = [0.14,0.19,0.24,0.26,0.30,0.36];
+const WMN = '#00CA9E', MEN = '#4B5563';
+
+const CLIW = ALCW.map((v,i)=>v*CTRW[i]/100);
+const CLIM = ALCM.map((v,i)=>v*CTRM[i]/100);
+const ALCF = ALCW.map((v,i)=>v+ALCM[i]);
+const CLIF = CLIW.map((v,i)=>v+CLIM[i]);
+const TALCW=sum(ALCW), TALCM=sum(ALCM), TALC=TALCW+TALCM;
+const TCLIW=sum(CLIW), TCLIM=sum(CLIM), TCLI=TCLIW+TCLIM;
+const shAlc = ALCF.map(v=>v/TALC*100);
+const shCli = CLIF.map(v=>v/TCLI*100);
+const idx   = shAlc.map((v,i)=>shCli[i]/v);
+
+function renderPub(){
+  const pAlc45 = (shAlc[3]+shAlc[4]+shAlc[5]);
+  const pCli45 = (shCli[3]+shCli[4]+shCli[5]);
+  document.getElementById('d1').textContent = p1(TALCW/TALC*100)+'%';
+  document.getElementById('d1b').textContent = p1(TCLIW/TCLI*100)+'%';
+  document.getElementById('d2').textContent = p1(TALCM/TALC*100)+'%';
+  document.getElementById('d2b').textContent = p1(TCLIM/TCLI*100)+'%';
+  document.getElementById('d3').textContent = p1(pAlc45)+'%';
+  document.getElementById('d3b').textContent = p1(pCli45)+'%';
+
+  let bi=0, wi=0;
+  idx.forEach((v,i)=>{ if(v>idx[bi]) bi=i; if(v<idx[wi]) wi=i; });
+  document.getElementById('d4').textContent = FX[bi];
+  document.getElementById('d4b').innerHTML = 'índice de '+p2(idx[bi])+', clica '+p1((idx[bi]-1)*100)+'% acima do seu peso';
+  document.getElementById('d5').textContent = FX[wi];
+  document.getElementById('d5b').innerHTML = 'índice de '+p2(idx[wi])+', clica '+p1((1-idx[wi])*100)+'% abaixo do seu peso';
+
+  const w45 = ALCW[3]+ALCW[4]+ALCW[5], w45c = CLIW[3]+CLIW[4]+CLIW[5];
+  document.getElementById('spW').textContent = p1(TCLIW/TCLI*100)+'%';
+  document.getElementById('spWm').innerHTML = 'de todos os cliques, com '+p1(TALCW/TALC*100)+'% do alcance. Taxa média de clique de <b style="color:'+WMN+'">'+p2(TCLIW/TALCW*100)+'%</b>. Só as mulheres de 45 anos ou mais concentram <b>'+p1(w45c/TCLI*100)+'%</b> do clique total com '+p1(w45/TALC*100)+'% do alcance.';
+  document.getElementById('spM').textContent = p1(TCLIM/TCLI*100)+'%';
+  document.getElementById('spMm').innerHTML = 'de todos os cliques, com '+p1(TALCM/TALC*100)+'% do alcance. Taxa média de clique de <b style="color:'+MEN+'">'+p2(TCLIM/TALCM*100)+'%</b>. A concentração masculina está em 25-34, faixa de maior alcance e menor conversão em clique.';
+
+  mk('chAge',{type:'bar',data:{labels:FX,datasets:[
+    {label:'Mulheres',data:ALCW,backgroundColor:WMN,borderRadius:5,maxBarThickness:38},
+    {label:'Homens',data:ALCM,backgroundColor:MEN,borderRadius:5,maxBarThickness:38}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{...lg,
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+fmtN(c.raw)+' ('+p1(c.raw/TALC*100)+'%)'}}},
+      scales:{x:{stacked:true,grid:{color:'#e8ebef'},ticks:{callback:v=>fmt(v)}},y:{stacked:true,grid:{display:false}}}}});
+
+  mk('chCtr',{type:'line',data:{labels:FX,datasets:[
+    {label:'Mulheres',data:CTRW,borderColor:WMN,backgroundColor:'rgba(0,202,158,.10)',fill:true,tension:.3,borderWidth:3,pointRadius:5},
+    {label:'Homens',data:CTRM,borderColor:MEN,backgroundColor:'rgba(75,85,99,.08)',fill:true,tension:.3,borderWidth:3,pointRadius:5}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{...lg,
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+p2(c.raw)+'%'}}},
+      scales:{y:{beginAtZero:true,grid:{color:'#e8ebef'},ticks:{callback:v=>p2(v)+'%'}},x:{grid:{display:false}}}}});
+
+  mk('chShare',{type:'bar',data:{labels:FX,datasets:[
+    {label:'% do alcance',data:shAlc,backgroundColor:'#cbd5dd',borderRadius:5,maxBarThickness:26},
+    {label:'% dos cliques',data:shCli,backgroundColor:WMN,borderRadius:5,maxBarThickness:26}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{...lg,
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+p1(c.raw)+'%'}}},
+      scales:{y:{beginAtZero:true,grid:{color:'#e8ebef'},ticks:{callback:v=>p1(v)+'%'}},x:{grid:{display:false}}}}});
+
+  (function(){
+    const th=document.querySelector('#tabDem thead'), tb=document.querySelector('#tabDem tbody');
+    th.innerHTML='<tr><th>Faixa</th><th class="r">Alcance mulheres</th><th class="r">Alcance homens</th><th class="r">Alcance total</th>'+
+      '<th class="r">% do alcance</th><th class="r">CTR mulheres</th><th class="r">CTR homens</th><th class="r">Cliques</th><th class="r">% dos cliques</th><th class="r">Índice</th></tr>';
+    let h='';
+    FX.forEach((f,i)=>{
+      const cls = idx[i]>=1.15?'g':(idx[i]<0.85?'r2':'a');
+      h+='<tr><td><b>'+f+'</b></td>'+
+         '<td class="r"><span class="num">'+fmtN(ALCW[i])+'</span></td>'+
+         '<td class="r"><span class="num">'+fmtN(ALCM[i])+'</span></td>'+
+         '<td class="r"><span class="num">'+fmtN(ALCF[i])+'</span></td>'+
+         '<td class="r"><span class="num" style="color:var(--mute)">'+p1(shAlc[i])+'%</span></td>'+
+         '<td class="r"><span class="num" style="color:'+WMN+'">'+p2(CTRW[i])+'%</span></td>'+
+         '<td class="r"><span class="num" style="color:'+MEN+'">'+p2(CTRM[i])+'%</span></td>'+
+         '<td class="r"><span class="num">'+fmtN(CLIF[i])+'</span></td>'+
+         '<td class="r"><span class="num" style="color:var(--mute)">'+p1(shCli[i])+'%</span></td>'+
+         '<td class="r"><span class="num '+cls+'">'+p2(idx[i])+'</span></td></tr>';
+    });
+    h+='<tr class="tot"><td>Total</td><td class="r">'+fmtN(TALCW)+'</td><td class="r">'+fmtN(TALCM)+'</td><td class="r">'+fmtN(TALC)+'</td>'+
+       '<td class="r">100,0%</td><td class="r">'+p2(TCLIW/TALCW*100)+'%</td><td class="r">'+p2(TCLIM/TALCM*100)+'%</td>'+
+       '<td class="r">'+fmtN(TCLI)+'</td><td class="r">100,0%</td><td class="r">1,00</td></tr>';
+    tb.innerHTML=h;
+  })();
+
+  (function(){
+    const pAlc45 = shAlc[3]+shAlc[4]+shAlc[5], pCli45 = shCli[3]+shCli[4]+shCli[5];
+    const w45 = ALCW[3]+ALCW[4]+ALCW[5], w45c = CLIW[3]+CLIW[4]+CLIW[5];
+    let h='<p>O público do Violeta é <b>majoritariamente feminino e maduro</b>. As mulheres representam '+p1(TALCW/TALC*100)+'% do alcance e <b>'+p1(TCLIW/TCLI*100)+'% dos cliques</b>, ou seja, respondem por uma fatia do interesse maior do que a fatia da audiência que ocupam.</p>';
+    h+='<p>A taxa de clique <b>sobe de forma contínua com a idade</b>, sem nenhuma exceção. Vai de '+p2(CTRW[0])+'% nas mulheres de 18 a 24 anos até '+p2(CTRW[5])+'% nas de 65 anos ou mais, quase o triplo. Entre os homens o mesmo movimento se repete, de '+p2(CTRM[0])+'% a '+p2(CTRM[5])+'%.</p>';
+    h+='<p>Isso muda o centro de gravidade da conta. A faixa de 25 a 34 anos é a maior em alcance, com '+p1(shAlc[1])+'%, mas entrega apenas '+p1(shCli[1])+'% dos cliques. Já o público de <b>45 anos ou mais concentra '+p1(pCli45)+'% do clique com '+p1(pAlc45)+'% do alcance</b>.</p>';
+    h+='<p>O núcleo real da audiência são as <b>mulheres de 45 anos ou mais</b>: '+p1(w45/TALC*100)+'% do alcance e <b>'+p1(w45c/TCLI*100)+'% de todos os cliques</b>. É a persona que decide a compra do mês da casa, responde a preço e reconhece marca de bairro. Comunicação, linguagem e horário de entrega devem ser calibrados por ela.</p>';
+    document.getElementById('insPub').innerHTML=h;
+  })();
+
+  document.getElementById('notaPub').innerHTML='<b>Sobre a base deste recorte.</b> O detalhamento demográfico soma '+fmt(TALC)+' de alcance e '+fmtN(TCLI)+' cliques, enquanto o consolidado das páginas registra 17,0 mi de contas alcançadas e 158,4 mil cliques no mesmo período. As bases de contagem da plataforma são diferentes, então a leitura correta aqui é de <b>proporção entre faixas e gêneros</b>, não de volume absoluto. Os cliques por faixa são calculados a partir do alcance e da taxa de clique informados.';
+}
+
 document.querySelectorAll('.tab').forEach(tb=>{
   tb.addEventListener('click',()=>{
     document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
     document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
     tb.classList.add('active');
     document.getElementById('v-'+tb.dataset.v).classList.add('active');
+    if(tb.dataset.v==='pub') renderPub();
     Object.values(charts).forEach(c=>c.resize());
   });
 });
 
 render();
+renderPub();
 </script>
 </body>
 </html>
