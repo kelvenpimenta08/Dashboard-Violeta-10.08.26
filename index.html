@@ -223,6 +223,23 @@ th.selcol{color:var(--green-d)}
       </div>
     </div>
 
+    
+    <div class="card full" style="margin-top:18px">
+      <h3>Perfil da audiência · Instagram e Facebook</h3>
+      <div class="h-sub">Distribuição por gênero e faixa etária das contas que acompanham e são alcançadas pelas páginas. Este bloco não varia com o filtro de mês do topo.</div>
+      <div class="kpis" style="margin-bottom:18px">
+        <div class="kpi"><div class="lbl">Mulheres</div><div class="val green" id="aEX1"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Homens</div><div class="val" id="aEX2"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Faixa dominante</div><div class="val green" id="aEX3"></div><div class="meta" id="aEX3b"></div></div>
+        <div class="kpi"><div class="lbl">Núcleo 25 a 54</div><div class="val" id="aEX4"></div><div class="meta">da audiência total</div></div>
+        <div class="kpi"><div class="lbl">Mulheres 25 a 54</div><div class="val green" id="aEX5"></div><div class="meta">grupo de maior peso</div></div>
+      </div>
+      <div class="chart-box"><canvas id="chAudEX"></canvas></div>
+      <div class="tscroll" style="margin-top:18px"><table id="tabAudEX"><thead></thead><tbody></tbody></table></div>
+      <div style="margin-top:16px;font-size:12.5px;line-height:1.65" id="insAudEX"></div>
+      <div class="note" id="notaAudEX"></div>
+    </div>
+
     <div class="insight"><h3>Leitura executiva</h3><div id="insExec"></div></div>
   </div>
 
@@ -320,6 +337,23 @@ th.selcol{color:var(--green-d)}
       <div class="tscroll"><table id="tabIG"><thead></thead><tbody></tbody></table></div>
     </div>
 
+    
+    <div class="card full" style="margin-top:18px">
+      <h3>Perfil da audiência · Instagram</h3>
+      <div class="h-sub">Distribuição por gênero e faixa etária das contas alcançadas no Instagram. Este bloco não varia com o filtro de mês do topo.</div>
+      <div class="kpis" style="margin-bottom:18px">
+        <div class="kpi"><div class="lbl">Mulheres</div><div class="val green" id="aIG1"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Homens</div><div class="val" id="aIG2"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Faixa dominante</div><div class="val green" id="aIG3"></div><div class="meta" id="aIG3b"></div></div>
+        <div class="kpi"><div class="lbl">Núcleo 25 a 54</div><div class="val" id="aIG4"></div><div class="meta">da audiência total</div></div>
+        <div class="kpi"><div class="lbl">Mulheres 25 a 54</div><div class="val green" id="aIG5"></div><div class="meta">grupo de maior peso</div></div>
+      </div>
+      <div class="chart-box"><canvas id="chAudIG"></canvas></div>
+      <div class="tscroll" style="margin-top:18px"><table id="tabAudIG"><thead></thead><tbody></tbody></table></div>
+      <div style="margin-top:16px;font-size:12.5px;line-height:1.65" id="insAudIG"></div>
+      <div class="note" id="notaAudIG"></div>
+    </div>
+
     <div class="insight"><h3>Leitura do Instagram</h3><div id="insIG"></div></div>
   </div>
 
@@ -355,6 +389,23 @@ th.selcol{color:var(--green-d)}
         </div>
       </div>
       <div class="tscroll"><table id="tabFB"><thead></thead><tbody></tbody></table></div>
+    </div>
+
+    
+    <div class="card full" style="margin-top:18px">
+      <h3>Perfil da audiência · Facebook</h3>
+      <div class="h-sub">Distribuição por gênero e faixa etária das pessoas alcançadas no Facebook. Este bloco não varia com o filtro de mês do topo.</div>
+      <div class="kpis" style="margin-bottom:18px">
+        <div class="kpi"><div class="lbl">Mulheres</div><div class="val green" id="aFB1"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Homens</div><div class="val" id="aFB2"></div><div class="meta">da audiência</div></div>
+        <div class="kpi"><div class="lbl">Faixa dominante</div><div class="val green" id="aFB3"></div><div class="meta" id="aFB3b"></div></div>
+        <div class="kpi"><div class="lbl">Núcleo 25 a 54</div><div class="val" id="aFB4"></div><div class="meta">da audiência total</div></div>
+        <div class="kpi"><div class="lbl">Mulheres 25 a 54</div><div class="val green" id="aFB5"></div><div class="meta">grupo de maior peso</div></div>
+      </div>
+      <div class="chart-box"><canvas id="chAudFB"></canvas></div>
+      <div class="tscroll" style="margin-top:18px"><table id="tabAudFB"><thead></thead><tbody></tbody></table></div>
+      <div style="margin-top:16px;font-size:12.5px;line-height:1.65" id="insAudFB"></div>
+      <div class="note" id="notaAudFB"></div>
     </div>
 
     <div class="insight"><h3>Leitura do Facebook</h3><div id="insFB"></div></div>
@@ -960,6 +1011,71 @@ function render(){
 }
 
 
+
+/* ================= PERFIL DA AUDIENCIA (organico) ================= */
+const AFX = ['18-24','25-34','35-44','45-54','55-64','65+'];
+const AUD = {
+  IG: { W:[3.0,16.6,23.0,17.4,8.7,4.6], M:[1.1,6.6,9.3,6.1,2.5,1.1] },
+  FB: { W:[1.8,16.4,23.7,18.6,8.9,6.2], M:[0.6,6.5,8.2,5.4,2.3,1.4] }
+};
+AUD.EX = {
+  W: AUD.IG.W.map((v,i)=>(v+AUD.FB.W[i])/2),
+  M: AUD.IG.M.map((v,i)=>(v+AUD.FB.M[i])/2)
+};
+const AW = '#00CA9E', AM = '#4B5563';
+
+function renderAud(key, canvas, tabid, insid, notaid, rotulo){
+  const d = AUD[key];
+  const base = sum(d.W)+sum(d.M);
+  const W = d.W.map(v=>v/base*100), M = d.M.map(v=>v/base*100);
+  const T = W.map((v,i)=>v+M[i]);
+  const tW = sum(W), tM = sum(M);
+  const n2554 = T[1]+T[2]+T[3];
+  const w2554 = W[1]+W[2]+W[3];
+  let di=0; T.forEach((v,i)=>{ if(v>T[di]) di=i; });
+
+  const g = s => document.getElementById(s);
+  g('a'+key+'1').textContent = p1(tW)+'%';
+  g('a'+key+'2').textContent = p1(tM)+'%';
+  g('a'+key+'3').textContent = AFX[di];
+  g('a'+key+'3b').textContent = p1(T[di])+'% da audiência';
+  g('a'+key+'4').textContent = p1(n2554)+'%';
+  g('a'+key+'5').textContent = p1(w2554)+'%';
+
+  mk(canvas,{type:'bar',data:{labels:AFX,datasets:[
+    {label:'Mulheres',data:W,backgroundColor:AW,borderRadius:5,maxBarThickness:38},
+    {label:'Homens',data:M,backgroundColor:AM,borderRadius:5,maxBarThickness:38}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{...lg,
+      tooltip:{callbacks:{label:c=>c.dataset.label+': '+p1(c.raw)+'%'}}},
+      scales:{x:{stacked:true,grid:{color:'#e8ebef'},ticks:{callback:v=>p1(v)+'%'}},y:{stacked:true,grid:{display:false}}}}});
+
+  const th=document.querySelector('#'+tabid+' thead'), tb=document.querySelector('#'+tabid+' tbody');
+  th.innerHTML='<tr><th>Faixa etária</th><th class="r">Mulheres</th><th class="r">Homens</th><th class="r">Total da faixa</th><th class="r">Peso dentro das mulheres</th><th class="r">Peso dentro dos homens</th></tr>';
+  let x='';
+  AFX.forEach((f,i)=>{
+    const cls = T[i]>=20?'g':(T[i]<6?'r2':'a');
+    x+='<tr><td><b>'+f+'</b></td>'+
+       '<td class="r"><span class="num" style="color:'+AW+'">'+p1(W[i])+'%</span></td>'+
+       '<td class="r"><span class="num" style="color:'+AM+'">'+p1(M[i])+'%</span></td>'+
+       '<td class="r"><span class="num '+cls+'">'+p1(T[i])+'%</span></td>'+
+       '<td class="r"><span class="num" style="color:var(--mute)">'+p1(W[i]/tW*100)+'%</span></td>'+
+       '<td class="r"><span class="num" style="color:var(--mute)">'+p1(M[i]/tM*100)+'%</span></td></tr>';
+  });
+  x+='<tr class="tot"><td>Total</td><td class="r">'+p1(tW)+'%</td><td class="r">'+p1(tM)+'%</td><td class="r">100,0%</td><td class="r">100,0%</td><td class="r">100,0%</td></tr>';
+  tb.innerHTML=x;
+
+  let t='<p>A audiência '+rotulo+' é <b>'+p1(tW)+'% feminina</b>. A faixa de <b>'+AFX[di]+' anos</b> é a maior isolada, com '+p1(T[di])+'% do total, e o bloco de <b>25 a 54 anos concentra '+p1(n2554)+'%</b> de toda a audiência.</p>';
+  t+='<p>O grupo de maior peso é o de <b>mulheres de 25 a 54 anos, com '+p1(w2554)+'%</b> da audiência. É a faixa que decide a compra do mês da casa, compara preço e escolhe o mercado de bairro. Comunicação, linguagem e horário de publicação devem ser calibrados por ela.</p>';
+  g(insid).innerHTML=t;
+  g(notaid).innerHTML='<b>Sobre este recorte.</b> Perfil demográfico das contas alcançadas, informado pelo Meta Business Suite. Os percentuais são calculados sobre o total da audiência, somando 100% entre os dois gêneros. A aba Público traz o recorte da entrega de anúncios, que tem base de contagem própria.';
+}
+
+function renderTodosPerfis(){
+  renderAud('EX','chAudEX','tabAudEX','insAudEX','notaAudEX','somada das duas plataformas');
+  renderAud('IG','chAudIG','tabAudIG','insAudIG','notaAudIG','do Instagram');
+  renderAud('FB','chAudFB','tabAudFB','insAudFB','notaAudFB','do Facebook');
+}
+
 /* ================= PUBLICO / DEMOGRAFIA ================= */
 const FX = ['18-24','25-34','35-44','45-54','55-64','65+'];
 const ALCW = [1940136,4845900,3956304,4011682,3905472,3425669];
@@ -1066,12 +1182,14 @@ document.querySelectorAll('.tab').forEach(tb=>{
     tb.classList.add('active');
     document.getElementById('v-'+tb.dataset.v).classList.add('active');
     if(tb.dataset.v==='pub') renderPub();
+    if(['exec','ig','fb'].includes(tb.dataset.v)) renderTodosPerfis();
     Object.values(charts).forEach(c=>c.resize());
   });
 });
 
 render();
 renderPub();
+renderTodosPerfis();
 </script>
 </body>
 </html>
